@@ -17,7 +17,10 @@ class UserController extends AbstractController
     public function getListeDesUsers(EntityManagerInterface $entityManager): JsonResponse
     {
         $data = $entityManager->getRepository(User::class)->findAll();
-        return new JsonResponse($data);
+        return $this->json(
+            $data,
+            headers: ['Content-Type' => 'application/json;charset=UTF-8']
+        );
     }
 
     #[Route('/users', name: 'user_post', methods:['POST'])]
@@ -43,7 +46,11 @@ class UserController extends AbstractController
                         $entityManager->persist($joueur);
                         $entityManager->flush();
 
-                        return new JsonResponse($joueur, 201);
+                        return $this->json(
+                                    $joueur,
+                                    201,
+                                    ['Content-Type' => 'application/json;charset=UTF-8']
+                                );                    
                     }else{
                         return new JsonResponse('Name already exists', 400);
                     }
@@ -182,7 +189,11 @@ class UserController extends AbstractController
 
                             $entityManager->flush();
 
-                            return new JsonResponse($joueur, 200);
+                            return $this->json(
+                                            $joueur,
+                                            200,
+                                            ['Content-Type' => 'application/json;charset=UTF-8']
+                                        );
                         }else{
                             return new JsonResponse('Name already exists', 400);
                         }
@@ -204,7 +215,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/user/{id}', name: 'delete_user_by_identifiant', methods:['DELETE'])]
-    public function suprUser($id, EntityManagerInterface $entityManager): JsonResponse
+    public function suprUser($id, EntityManagerInterface $entityManager): JsonResponse | null
     {
         $joueur = $entityManager->getRepository(User::class)->findBy(['id'=>$id]);
         if(count($joueur) == 1){
@@ -215,7 +226,7 @@ class UserController extends AbstractController
     
                 if(!empty($existeEncore)){
                     throw new \Exception("Le user n'a pas éte délété");
-                    return;
+                    return null;
                 }else{
                     return new JsonResponse('', 204);
                 }
