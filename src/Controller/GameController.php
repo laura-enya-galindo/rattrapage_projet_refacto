@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+
+use Symfony\Component\Validator\Constraints as Assert;
 class GameController extends AbstractController
 {
     #[Route('/games', name: 'get_list_of_games', methods:['GET'])]
@@ -145,7 +147,7 @@ class GameController extends AbstractController
         $form = $this->createFormBuilder()
             ->add('choice', TextType::class, [
                 'constraints' => [
-                    new NotBlank()
+                    new Assert\NotBlank()
                 ]
             ])
             ->getForm();
