@@ -7,14 +7,14 @@ App\Entity\Game:
         playLeft: null
         result: null
     game_2:
-        state: pending
+        state: ongoing
         playerLeft: '@user_1'
         playerRight: '@user_2'
         playRight: null
         playLeft: null
         result: null
     game_3:
-        state: pending
+        state: ongoing
         playerLeft: '@user_1'
         playerRight: '@user_2'
         playRight: 'scissors'
