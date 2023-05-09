@@ -4,12 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Game;
 use App\Entity\User;
-use Doctrine\DBAL\Types\TextType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 use Symfony\Component\Validator\Constraints as Assert;
 class GameController extends AbstractController
@@ -137,21 +137,22 @@ class GameController extends AbstractController
     }
 
     #[Route('/game/{identifiant}', name: 'send_choice', methods:['PATCH'])]
-    public function play(Request $request, EntityManagerInterface $entityManager, int $identifiant): JsonResponse
+    public function play(Request $request, EntityManagerInterface $entityManager, $identifiant): JsonResponse
     {
-        if(ctype_digit($identifiant) === false){
-            return new JsonResponse('Game not found', 404);
-        }
         $currentUserId = $request->headers->get('X-User-Id');
 
         if(ctype_digit($currentUserId) === false){
-            return new JsonResponse('User not found', 404);
+            return new JsonResponse('User not found', 401);
         }
 
         $currentUser = $entityManager->getRepository(User::class)->find($currentUserId);
 
         if($currentUser === null){
-            return new JsonResponse('User not found', 404);
+            return new JsonResponse('User not found', 401);
+        }
+    
+        if(ctype_digit($identifiant) === false){
+            return new JsonResponse('Game not found', 404);
         }
 
         $game = $entityManager->getRepository(Game::class)->find($identifiant);
@@ -160,19 +161,22 @@ class GameController extends AbstractController
             return new JsonResponse('Game not found', 404);
         }
 
-        // we must check the game is ongoing and the user is a player of this game
-        if($game->getState() === 'finished' || $game->getState() === 'pending'){
-            return new JsonResponse('Game not started', 409);
-        }
-
+        $userIsPlayerLeft = false;
+        $userIsPlayerRight = $userIsPlayerLeft;
+        
         if($game->getPlayerLeft()->getId() === $currentUser->getId()){
             $userIsPlayerLeft = true;
         }elseif($game->getPlayerRight()->getId() === $currentUser->getId()){
             $userIsPlayerRight = true;
         }
         
-        if($userIsPlayerLeft === false && !$userIsPlayerRight){
+        if(false === $userIsPlayerLeft && !$userIsPlayerRight){
             return new JsonResponse('You are not a player of this game', 403);
+        }
+
+        // we must check the game is ongoing and the user is a player of this game
+        if($game->getState() === 'finished' || $game->getState() === 'pending'){
+            return new JsonResponse('Game not started', 409);
         }
 
         $form = $this->createFormBuilder()
@@ -241,6 +245,11 @@ class GameController extends AbstractController
                     );
                 }
 
+                return $this->json(
+                    $game,
+                    headers: ['Content-Type' => 'application/json;charset=UTF-8']
+                );
+
             }elseif($userIsPlayerRight){            
                 $game->setPlayRight($data['choice']);
 
@@ -292,7 +301,17 @@ class GameController extends AbstractController
 
                     $game->setState('finished');
                     $entityManager->flush();
+
+                    return $this->json(
+                        $game,
+                        headers: ['Content-Type' => 'application/json;charset=UTF-8']
+                    );
+    
                 }
+                return $this->json(
+                    $game,
+                    headers: ['Content-Type' => 'application/json;charset=UTF-8']
+                );
 
             }
 

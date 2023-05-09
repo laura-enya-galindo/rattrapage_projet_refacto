@@ -17,8 +17,8 @@ App\Entity\Game:
         state: ongoing
         playerLeft: '@user_1'
         playerRight: '@user_2'
-        playRight: 'scissors'
-        playLeft: null
+        playRight: null
+        playLeft: 'scissors'
         result: null
     game_4:
         state: finished

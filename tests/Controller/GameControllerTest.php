@@ -257,6 +257,129 @@ class GameControllerTest extends WebTestCase
     }
 
     /**
+     * @dataProvider dataprovider_play_checkWithInvalidAuth
+     */
+    public function test_play_checkWithInvalidAuth($id){
+        $client = static::createClient([], ['HTTP_X_USER_ID' => $id]);
+        $client->request('PATCH', '/game/2');
+        $this->assertEquals(401, $client->getResponse()->getStatusCode());
+    }
+
+    private static function dataprovider_play_checkWithInvalidAuth(): array
+    {
+        return [
+            [''],
+            ['a'],
+            ['0'],
+            ['-1'],
+            ['10'],
+        ];
+    }
+
+    /**
+     * @dataProvider dataprovider_play_checkWithGameNotFound
+     */
+    public function test_play_checkWithGameNotFound($id){
+        $client = static::createClient([], ['HTTP_X_USER_ID' => 1]);
+        $client->request('PATCH', '/game/'.$id);
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
+    }
+
+    private static function dataprovider_play_checkWithGameNotFound(): array
+    {
+        return [
+            ['a'],
+            ['0'],
+            ['-1'],
+            ['10'],
+        ];
+    }
+
+    /**
+     * @dataProvider dataprovider_play_checkWithForbiddenGame
+     */
+    public function test_play_checkWithForbiddenGame($id){
+        $client = static::createClient([], ['HTTP_X_USER_ID' => 3]);
+        $client->request('PATCH', '/game/2');
+        $this->assertEquals(403, $client->getResponse()->getStatusCode());
+    }
+
+    private static function dataprovider_play_checkWithForbiddenGame(): array
+    {
+        return [
+            [1],
+            [4],
+        ];
+    }
+
+    public function test_play_checkWithGameNotStarted(){
+        $client = static::createClient([], ['HTTP_X_USER_ID' => 1]);
+        $client->request('PATCH', '/game/1');
+        $this->assertEquals(409, $client->getResponse()->getStatusCode());
+    }
+
+    public function test_play_checkWithInvalidChoice(){
+        $client = static::createClient([], ['HTTP_X_USER_ID' => 1]);
+        $client->request('PATCH', '/game/2', [], [], ['CONTENT_TYPE' => 'application/json'], '{"choice":"invalid"}');
+        $this->assertEquals(400, $client->getResponse()->getStatusCode());
+    }
+
+    public function test_play_checkValidStatusCode(){
+        $client = static::createClient([], ['HTTP_X_USER_ID' => 1]);
+        $client->request('PATCH', '/game/2', [], [], ['CONTENT_TYPE' => 'application/json'], '{"choice":"rock"}');
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+    }
+
+    public function test_play_checkValidValuesForFirstTurn(){
+        $client = static::createClient([], ['HTTP_X_USER_ID' => 1]);
+        $client->request('PATCH', '/game/2', [], [], ['CONTENT_TYPE' => 'application/json'], '{"choice":"rock"}');
+
+        $content = json_decode($client->getResponse()->getContent());
+
+        $this->assertObjectHasAttribute('id', $content);
+        $this->assertObjectHasAttribute('state', $content);
+        $this->assertObjectHasAttribute('playLeft', $content);
+        $this->assertObjectHasAttribute('playRight', $content);
+        $this->assertObjectHasAttribute('result', $content);
+        $this->assertObjectHasAttribute('playerLeft', $content);
+        $this->assertObjectHasAttribute('playerRight', $content);
+
+        $this->assertEquals('rock', $content->playLeft);
+        $this->assertEquals(null, $content->playRight);
+        $this->assertEquals(null, $content->result);
+    }
+
+    /**
+     * @dataProvider dataprovider_play_checkValidValuesWithGameResult
+     */
+    public function test_play_checkValidValuesWithGameResult($choice, $expectedResult){
+        $client = static::createClient([], ['HTTP_X_USER_ID' => 2]);
+        $client->request('PATCH', '/game/3', [], [], ['CONTENT_TYPE' => 'application/json'], '{"choice":"'.$choice.'"}');
+
+        $content = json_decode($client->getResponse()->getContent());
+        $this->assertObjectHasAttribute('id', $content);
+        $this->assertObjectHasAttribute('state', $content);
+        $this->assertObjectHasAttribute('playLeft', $content);
+        $this->assertObjectHasAttribute('playRight', $content);
+        $this->assertObjectHasAttribute('result', $content);
+        $this->assertObjectHasAttribute('playerLeft', $content);
+        $this->assertObjectHasAttribute('playerRight', $content);
+
+        $this->assertEquals('scissors', $content->playLeft);
+        $this->assertEquals($choice, $content->playRight);
+        $this->assertEquals($expectedResult, $content->result);
+    }
+
+    private static function dataprovider_play_checkValidValuesWithGameResult(): array
+    {
+        return [
+            ['rock', 'winRight'],
+            ['paper', 'winLeft'],
+            ['scissors', 'draw'],
+        ];
+    }
+
+    /**
      * @dataProvider dataprovider_deleteGame_checkWithInvalidAuth
      */
     public function test_deleteGame_checkWithInvalidAuth($id){
@@ -327,6 +450,4 @@ class GameControllerTest extends WebTestCase
             [2],
         ];
     }
-
-
 }

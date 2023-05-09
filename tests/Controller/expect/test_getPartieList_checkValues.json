@@ -42,8 +42,8 @@
       "name": "Jane",
       "age": 22
     },
-    "playLeft": null,
-    "playRight": "scissors",
+    "playLeft": "scissors",
+    "playRight": null,
     "result": null
   },
   {
