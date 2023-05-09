@@ -79,7 +79,7 @@ class GameController extends AbstractController
         }
     }
 
-    #[Route('/games/{id}/add/{playerRightId}', name: 'add_user_right', methods:['PATCH'])]
+    #[Route('/game/{id}/add/{playerRightId}', name: 'add_user_right', methods:['PATCH'])]
     public function inviteToGame(Request $request, EntityManagerInterface $entityManager, $id, $playerRightId): JsonResponse
     {
         $currentUserId = $request->headers->get('X-User-Id');
@@ -304,18 +304,20 @@ class GameController extends AbstractController
     }
 
     #[Route('/game/{id}', name: 'annuler_game', methods:['DELETE'])]
-    public function deleteGame(EntityManagerInterface $entityManager, Request $request, int $id): JsonResponse
+    public function deleteGame(EntityManagerInterface $entityManager, Request $request, $id): JsonResponse
     {
-        if(ctype_digit($id) === false){
-            return new JsonResponse('Game not found', 404);
-        }
-
+   
         $currentUserId = $request->headers->get('X-User-Id');
 
         if(ctype_digit($currentUserId) === true){
             $player = $entityManager->getRepository(User::class)->find($currentUserId);
 
             if($player !== null){
+
+                if(ctype_digit($id) === false){
+                    return new JsonResponse('Game not found', 404);
+                }
+        
                 $game = $entityManager->getRepository(Game::class)->findOneBy(['id' => $id, 'playerLeft' => $player]);
 
                 if(empty($game)){
@@ -323,7 +325,7 @@ class GameController extends AbstractController
                 }
 
                 if(empty($game)){
-                    return new JsonResponse('Game not found', 404);
+                    return new JsonResponse('Game not found', 403);
                 }
 
                 $entityManager->remove($game);
@@ -332,10 +334,10 @@ class GameController extends AbstractController
                 return new JsonResponse(null, 204);
 
             }else{
-                return new JsonResponse('User not found', 404);
+                return new JsonResponse('User not found', 401);
             }
         }else{
-            return new JsonResponse('User not found', 404);
+            return new JsonResponse('User not found', 401);
         }
     }
 }
