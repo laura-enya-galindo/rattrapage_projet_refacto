@@ -31,11 +31,15 @@ class GameController extends AbstractController
 
         if($currentUserId !== null){
 
+            if(ctype_digit($currentUserId) === false){
+                return new JsonResponse('User not found', 401);
+            }
+
             $currentUser = $entityManager->getRepository(User::class)->find($currentUserId);
 
             // Si l'utilisateur n'existe pas -> stop creation de partie
             if($currentUser === null){
-                return new JsonResponse('User not found', 404);
+                return new JsonResponse('User not found', 401);
             }
 
             $nouvelle_partie = new Game();
@@ -48,10 +52,11 @@ class GameController extends AbstractController
 
             return $this->json(
                 $nouvelle_partie,
+                201,
                 headers: ['Content-Type' => 'application/json;charset=UTF-8']
             );
         }else{
-            return new JsonResponse('User not found', 404);
+            return new JsonResponse('User not found', 401);
         }
     }
 

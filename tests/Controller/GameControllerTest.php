@@ -91,4 +91,49 @@ class GameControllerTest extends WebTestCase
         $content = $client->getResponse()->getContent();
         $this->assertJsonStringEqualsJsonString('{"id":4,"state":"finished","playLeft":"paper","playRight":"scissors","result":"winLeft","playerLeft":{"id":1,"name":"John","age":25},"playerRight":{"id":2,"name":"Jane","age":22}}', $content);
     }
+
+    public function test_launchGame_checkStatusWithoutUserParam(){
+        $client = static::createClient();
+        $client->request('POST', '/games');
+        $this->assertEquals(401, $client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * @dataProvider dataprovider_launchGame_checkStatusWithInvalidUserParam
+     */
+    public function test_launchGame_checkStatusWithInvalidUserParam($userParam){
+        $client = static::createClient([], ['HTTP_X_USER_ID' => $userParam]);
+        $client->request('POST', '/games');
+        $this->assertEquals(401, $client->getResponse()->getStatusCode());
+    }
+
+    private static function dataprovider_launchGame_checkStatusWithInvalidUserParam(): array
+    {
+        return [
+            [''],
+            ['a'],
+            ['0'],
+            ['-1'],
+        ];
+    }
+
+    public function test_launchGame_checkStatusWhenValid(){
+        $client = static::createClient([], ['HTTP_X_USER_ID' => 1]);
+        $client->request('POST', '/games');
+        $this->assertEquals(201, $client->getResponse()->getStatusCode());
+    }
+
+    public function test_launchGame_checkValuesWhenValid(){
+        $client = static::createClient([], ['HTTP_X_USER_ID' => 1]);
+        $client->request('POST', '/games');
+
+        $content = json_decode($client->getResponse()->getContent());
+        $this->assertObjectHasAttribute('id', $content);
+        $this->assertObjectHasAttribute('state', $content);
+        $this->assertObjectHasAttribute('playLeft', $content);
+        $this->assertObjectHasAttribute('playRight', $content);
+        $this->assertObjectHasAttribute('result', $content);
+        $this->assertObjectHasAttribute('playerLeft', $content);
+        $this->assertObjectHasAttribute('playerRight', $content);
+    }
 }
