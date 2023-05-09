@@ -37,8 +37,10 @@ class GameControllerTest extends WebTestCase
         $client = static::createClient();
         $client->request('GET', '/games');
 
-        $content = $client->getResponse()->getContent();
-        //$this->assertJsonStringEqualsJsonString('[{"id":1,"name":"John","age":25},{"id":2,"name":"Jane","age":22},{"id":3,"name":"Jack","age":27}]', $content);
+        $content = json_decode($client->getResponse()->getContent());
+
+        $expectedResult = json_decode(file_get_contents(__DIR__.'/expect/test_getPartieList_checkValues.json'));
+        $this->assertEquals($expectedResult, $content);
     }
 
     /**
