@@ -38,7 +38,7 @@ composer reset-db
 
 Vous êtes dans la peau d'un développeur freelance, récemment débauché par une entreprise qui souhaite refactoriser le code de son application : une API destinée à lancer des parties de shifumi (pierre-papier-ciseaux) entre deux joueurs.
 
-L'application a été développée par différentes équipes de niveaux hétérogènes par le passé. Ils n'ont pas pris la peine de respecter les bonnes pratiques de développement ni de s'intéresser au fonctionnement du framework utilisé. Leur seul objectif était de livrer de la fonctionnalité.
+L'application a été développée par différentes équipes de niveaux technique hétérogènes et avec une implication variable par le passé. Ils n'ont pas pris la peine de respecter les bonnes pratiques de développement ni de s'intéresser au fonctionnement du framework utilisé. Leur seul objectif était de livrer de la fonctionnalité.
 
 L'application est entièrement fonctionnelle. Les équipes précédentes ont pris la peine d'écrire des tests fonctionnels pour s'assurer que leur code correspondait aux attentes de leurs managers et chefs de projets.
 
