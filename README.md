@@ -44,6 +44,8 @@ L'application est entièrement fonctionnelle. Les équipes précédentes ont pri
 
 Votre objectif est de refactoriser le code pour rendre l'application plus maintenable, plus lisible et plus facilement testable. Il sera attendu de vous que vous appliquez les bonnes pratiques de développement ainsi que vous utilisez au mieux les outils fournis par le framework. L'ajout de tests unitaires supplémentaires et de documentation est un plus appréciable. La seule contrainte que l'entreprise vous impose est de conserver toutes les fonctionnalités existantes de l'application. Les tests déjà présents doivent toujours être valides après votre refactorisation.
 
+Une fois votre travail effectué, créez une pull request vers le projet d'origine.
+
 ## Tests
 
 Des tests fonctionnels ont été écrits pour garantir la non régression de l'application. Pour lancer les tests :
