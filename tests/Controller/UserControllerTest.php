@@ -90,10 +90,23 @@ class UserControllerTest extends WebTestCase
         $this->assertEquals(405, $client->getResponse()->getStatusCode());
     }
 
-    public function test_getUserWithIdentifiant_checkWithInvalidId(){
+    /**
+     * @dataProvider dataprovider_getUserWithIdentifiant_checkWithInvalidId
+     */
+    public function test_getUserWithIdentifiant_checkWithInvalidId($id){
         $client = static::createClient();
-        $client->request('GET', '/user/0');
+        $client->request('GET', '/user/'.$id);
         $this->assertEquals(404, $client->getResponse()->getStatusCode());
+    }
+
+    private static function dataprovider_getUserWithIdentifiant_checkWithInvalidId(): array
+    {
+        return [
+            [0],
+            [4],
+            [-1],
+            ['a'],
+        ];
     }
 
     public function test_getUserWithIdentifiant_checkStatusWithValidId(){
@@ -110,10 +123,23 @@ class UserControllerTest extends WebTestCase
         $this->assertJsonStringEqualsJsonString('{"id":1,"name":"John","age":25}', $content);
     }
     
-    public function test_updateUser_withInvalidId(){
+    /**
+     * @dataProvider dataprovider_updateUser_withInvalidId
+     */
+    public function test_updateUser_withInvalidId($id){
         $client = static::createClient();
-        $client->request('PATCH', '/user/0');
+        $client->request('PATCH', '/user/'.$id);
         $this->assertEquals(404, $client->getResponse()->getStatusCode());
+    }
+
+    private static function dataprovider_updateUser_withInvalidId(): array
+    {
+        return [
+            [0],
+            [4],
+            [-1],
+            ['a'],
+        ];
     }
 
     public function test_updateUser_withTooManyData(){
@@ -148,10 +174,23 @@ class UserControllerTest extends WebTestCase
         $this->assertJsonStringEqualsJsonString('{"id":1,"name":"Joe","age":30}', $content);
     }
 
-    public function test_suprUser_withInvalidId(){
+    /**
+     * @dataProvider dataprovider_suprUser_withInvalidId
+     */
+    public function test_suprUser_withInvalidId($id){
         $client = static::createClient();
-        $client->request('DELETE', '/user/0');
+        $client->request('DELETE', '/user/'.$id);
         $this->assertEquals(404, $client->getResponse()->getStatusCode());
+    }
+
+    private static function dataprovider_suprUser_withInvalidId(): array
+    {
+        return [
+            [0],
+            [4],
+            [-1],
+            ['a'],
+        ];
     }
 
     public function test_suprUser_checkValidStatus(){
