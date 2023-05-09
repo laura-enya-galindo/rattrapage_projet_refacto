@@ -136,4 +136,125 @@ class GameControllerTest extends WebTestCase
         $this->assertObjectHasAttribute('playerLeft', $content);
         $this->assertObjectHasAttribute('playerRight', $content);
     }
+
+    /**
+     * @dataProvider dataprovider_inviteToGane_checkAuthorizedMethods
+     */
+    public function test_inviteToGame_checkAuthorizedMethods($method){
+        $client = static::createClient();
+        $client->request($method, '/games/1/add/2');
+        $this->assertEquals(405, $client->getResponse()->getStatusCode());
+    }
+
+    private static function dataprovider_inviteToGane_checkAuthorizedMethods(): array
+    {
+        return [
+            ['GET'],
+            ['PUT'],
+            ['DELETE'],
+            ['POST'],
+        ];
+    }
+
+    /**
+     * @dataProvider dataprovider_inviteToGame_checkWithInvalidAuth
+     */
+    public function test_inviteToGame_checkWithInvalidAuth($id){
+        $client = static::createClient([], ['HTTP_X_USER_ID' => $id]);
+        $client->request('PATCH', '/games/1/add/2');
+        $this->assertEquals(401, $client->getResponse()->getStatusCode());
+    }
+
+    private static function dataprovider_inviteToGame_checkWithInvalidAuth(): array
+    {
+        return [
+            [''],
+            ['a'],
+            ['0'],
+            ['-1'],
+        ];
+    }
+
+    /**
+     * @dataProvider dataprovider_inviteToGame_checkWithInvalidGameId
+     */
+    public function test_inviteToGame_checkWithInvalidGameId($id){
+        $client = static::createClient([], ['HTTP_X_USER_ID' => 1]);
+        $client->request('PATCH', '/games/'.$id.'/add/2');
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
+    }
+
+    private static function dataprovider_inviteToGame_checkWithInvalidGameId(): array
+    {
+        return [
+            ['a'],
+            ['0'],
+            ['-1'],
+            ['10'],
+        ];
+    }
+
+    /**
+     * @dataProvider dataprovider_inviteToGame_checkWithInvalidGameStatus
+     */
+    public function test_inviteToGame_checkWithInvalidGameStatus($id){
+        $client = static::createClient([], ['HTTP_X_USER_ID' => 1]);
+        $client->request('PATCH', '/games/'.$id.'/add/2');
+        $this->assertEquals(409, $client->getResponse()->getStatusCode());
+    }
+
+    private static function dataprovider_inviteToGame_checkWithInvalidGameStatus(): array
+    {
+        return [
+            [2],
+            [4]
+        ];
+    }
+
+    /**
+     * @dataProvider dataprovider_inviteToGame_checkWithInvalidPlayerRight
+     */
+    public function test_inviteToGame_checkWithInvalidPlayerRight($id){
+        $client = static::createClient([], ['HTTP_X_USER_ID' => 1]);
+        $client->request('PATCH', '/games/1/add/'.$id);
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
+    }
+
+    private static function dataprovider_inviteToGame_checkWithInvalidPlayerRight(): array
+    {
+        return [
+            ['a'],
+            ['0'],
+            ['-1'],
+            ['10'],
+        ];
+    }
+
+    public function test_inviteToGame_checkWithDuplicatePlayer(){
+        $client = static::createClient([], ['HTTP_X_USER_ID' => 1]);
+        $client->request('PATCH', '/games/1/add/1');
+        $this->assertEquals(409, $client->getResponse()->getStatusCode());
+    }
+
+    public function test_inviteToGame_checkValidStatusCode(){
+        $client = static::createClient([], ['HTTP_X_USER_ID' => 1]);
+        $client->request('PATCH', '/games/1/add/2');
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+    }
+
+    public function test_inviteToGame_checkValidValues(){
+        $client = static::createClient([], ['HTTP_X_USER_ID' => 1]);
+        $client->request('PATCH', '/games/1/add/2');
+
+        $content = json_decode($client->getResponse()->getContent());
+        $this->assertObjectHasAttribute('id', $content);
+        $this->assertObjectHasAttribute('state', $content);
+        $this->assertObjectHasAttribute('playLeft', $content);
+        $this->assertObjectHasAttribute('playRight', $content);
+        $this->assertObjectHasAttribute('result', $content);
+        $this->assertObjectHasAttribute('playerLeft', $content);
+        $this->assertObjectHasAttribute('playerRight', $content);
+    }
+
+
 }

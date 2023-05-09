@@ -84,11 +84,16 @@ class GameController extends AbstractController
     {
         $currentUserId = $request->headers->get('X-User-Id');
 
+        if(empty($currentUserId)){
+            return new JsonResponse('User not found', 401);
+        }
+
         if(ctype_digit($id) && ctype_digit($playerRightId) && ctype_digit($currentUserId)){
+   
             $playerLeft = $entityManager->getRepository(User::class)->find($currentUserId);
 
             if($playerLeft === null){
-                return new JsonResponse('User not found', 404);
+                return new JsonResponse('User not found', 401);
             }
 
             $game = $entityManager->getRepository(Game::class)->find($id);
@@ -101,6 +106,7 @@ class GameController extends AbstractController
                 return new JsonResponse('Game already started', 409);
             }
 
+ 
             $playerRight = $entityManager->getRepository(User::class)->find($playerRightId);
 
             if($playerRight !== null){
@@ -122,6 +128,10 @@ class GameController extends AbstractController
                 return new JsonResponse('User not found', 404);
             }
         }else{
+            if(ctype_digit($currentUserId) === false){
+                return new JsonResponse('User not found', 401);
+            }
+    
             return new JsonResponse('Game not found', 404);
         }
     }
