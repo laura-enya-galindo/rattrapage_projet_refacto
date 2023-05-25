@@ -96,76 +96,6 @@ class UserController extends AbstractController
 
 
         if(count($player) == 1){
-
-            // ETO 01/05/2023 on n'utilise plus le put
-            // on est passé au patch
-            // parce que c'etait plus simple a utiliser
-            /*
-            if($request->getMethod() == 'PUT'){
-                $data = json_decode($request->getContent(), true);
-
-                $form = $this->createFormBuilder()
-                    ->add('nom', TextType::class)
-                    ->add('age', NumberType::class)
-                    ->getForm();
-
-                $form->submit($data);
-
-                if($form->isValid()) {
-                    if($data['age'] > 21){
-                        $user = $entityManager->getRepository(User::class)->findBy(['name'=>$data['nom']]);
-                        if(count($user) === 0){
-                            $player->setName($data['nom']);
-                            $player->setAge($data['age']);
-                            $entityManager->persist($player);
-                            $entityManager->flush();
-
-                            return new JsonResponse($player, 200);
-                        }else{
-                            return new JsonResponse('Name already exists', 400);
-                        }
-                    }else{
-                        return new JsonResponse('Wrong age', 400);
-                    }
-                }else{
-                    return new JsonResponse('Invalid form', 400);
-                }
-            }elseif($request->getMethod() == 'PATCH'){
-                $data = json_decode($request->getContent(), true);
-                $form = $this->createFormBuilder()
-                    ->add('nom', TextType::class, array(
-                        'required'=>false
-                    ))
-                    ->add('age', NumberType::class, [
-                        'required' => false
-                    ])
-                    ->getForm();
-
-                $form->submit($data);
-                if($form->isValid()) {
-                    if($data['age'] > 21){
-                        $user = $entityManager->getRepository(User::class)->findBy(['name'=>$data['nom']]);
-                        if(count($user) === 0){
-                            $player->setName($data['nom']);
-                            $player->setAge($data['age']);
-                            $entityManager->flush();
-
-                            return new JsonResponse($player, 200);
-                        }else{
-                            return new JsonResponse('Name already exists', 400);
-                        }
-                    }else{
-                        return new JsonResponse('Wrong age', 400);
-                    }
-                }else{
-                    return new JsonResponse('Invalid form', 400);
-                }
-            }else{
-                $data = json_decode($request->getContent(), true);
-                return new JsonResponse('Wrong method', 405);
-            }
-            */
-
             if($request->getMethod() == 'PATCH'){
                 $data = json_decode($request->getContent(), true);
                 $form = $this->createFormBuilder()
@@ -216,7 +146,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/user/{id}', name: 'delete_user_by_identifiant', methods:['DELETE'])]
-    public function suprUser($id, EntityManagerInterface $entityManager): JsonResponse | null
+    public function deleteUser($id, EntityManagerInterface $entityManager): JsonResponse | null
     {
         $player = $entityManager->getRepository(User::class)->findBy(['id'=>$id]);
         if(count($player) == 1){
@@ -227,7 +157,7 @@ class UserController extends AbstractController
                 $existeEncore = $entityManager->getRepository(User::class)->findBy(['id'=>$id]);
     
                 if(!empty($existeEncore)){
-                    throw new \Exception("Le user n'a pas éte délété");
+                    throw new \Exception("User has not been deleted");
                     return null;
                 }else{
                     return new JsonResponse('', 204);
