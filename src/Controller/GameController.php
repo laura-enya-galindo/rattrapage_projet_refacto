@@ -104,25 +104,27 @@ class GameController extends AbstractController
 
 
         $playerRight = $entityManager->getRepository(User::class)->find($playerRightId);
-
-        if($playerRight !== null){
-
-            if($playerLeft->getId() === $playerRight->getId()){
-                return new JsonResponse('You can\'t play against yourself', 409);
-            }
-            
-            $game->setPlayerRight($playerRight);
-            $game->setState('ongoing');
-
-            $entityManager->flush();
-
-            return $this->json(
-                $game,
-                headers: ['Content-Type' => 'application/json;charset=UTF-8']
-            );
-        }else{
+        if ($playerRight === null) {
             return new JsonResponse('User not found', 404);
         }
+        // if($playerRight !== null){
+
+        if($playerLeft->getId() === $playerRight->getId()){
+            return new JsonResponse('You can\'t play against yourself', 409);
+        }
+        
+        $game->setPlayerRight($playerRight);
+        $game->setState('ongoing');
+
+        $entityManager->flush();
+
+        return $this->json(
+            $game,
+            headers: ['Content-Type' => 'application/json;charset=UTF-8']
+        );
+        // }else{
+        //     return new JsonResponse('User not found', 404);
+        // }
         // }else{
         //     if(ctype_digit($currentUserId) === false){
         //         return new JsonResponse('User not found', 401);
