@@ -124,17 +124,18 @@ class UserController extends AbstractController
                                 if(count($user) === 0){
                                     $player[0]->setName($data['nom']);
                                     $entityManager->flush();
-                                }else{
-                                    return new JsonResponse('Name already exists', 400);
+                                break;
                                 }
+                                return new JsonResponse('Name already exists', 400);
+                                
                                 break;
                             case 'age':
                                 if($data['age'] > 21){
                                     $player[0]->setAge($data['age']);
                                     $entityManager->flush();
-                                }else{
-                                    return new JsonResponse('Wrong age', 400);
+                                break;
                                 }
+                                return new JsonResponse('Wrong age', 400);
                                 break;
                         }
                     }
