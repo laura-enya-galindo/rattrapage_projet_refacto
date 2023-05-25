@@ -177,7 +177,10 @@ class GameController extends AbstractController
 
         $form->submit($choice);
 
-        if($form->isValid()){
+        if($form->isValid() === false){
+            return new JsonResponse('Invalid choice', 400);
+        }
+        // if($form->isVsalid()){
 
             $data = $form->getData();
 
@@ -236,7 +239,8 @@ class GameController extends AbstractController
                     headers: ['Content-Type' => 'application/json;charset=UTF-8']
                 );
 
-            }elseif($userIsPlayerRight){            
+            }
+            if($userIsPlayerRight){            
                 $game->setPlayRight($data['choice']);
 
                 $entityManager->flush();
@@ -301,9 +305,9 @@ class GameController extends AbstractController
 
             }
 
-        }else{
-            return new JsonResponse('Invalid choice', 400);
-        }
+        // }else{
+        //     return new JsonResponse('Invalid choice', 400);
+        // }
 
         return new JsonResponse('coucou');
     }
