@@ -199,11 +199,13 @@ class GameController extends AbstractController
                         case 'rock':
                             if($game->getPlayRight() === 'paper'){
                                 $game->setResult('winRight');
-                            }elseif($game->getPlayRight() === 'scissors'){
-                                $game->setResult('winLeft');
-                            }else{
-                                $game->setResult('draw');
+                                break;
                             }
+                            if($game->getPlayRight() === 'scissors'){
+                                $game->setResult('winLeft');
+                                break;
+                            }
+                            $game->setResult('draw');
                             break;
                         case 'paper':
                             if($game->getPlayRight() === 'scissors'){
