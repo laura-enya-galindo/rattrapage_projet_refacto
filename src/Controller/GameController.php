@@ -180,61 +180,125 @@ class GameController extends AbstractController
         if($form->isValid() === false){
             return new JsonResponse('Invalid choice', 400);
         }
-        // if($form->isVsalid()){
 
-            $data = $form->getData();
+        $data = $form->getData();
+        if($data['choice'] !== 'rock' && $data['choice'] !== 'paper' && $data['choice'] !== 'scissors'){
+            return new JsonResponse('Invalid choice', 400);
+        }
 
-            // on joue avec les règles de base de pierre feuille ciseaux
-            if($data['choice'] !== 'rock' && $data['choice'] !== 'paper' && $data['choice'] !== 'scissors'){
-                return new JsonResponse('Invalid choice', 400);
-            }
+        if($userIsPlayerLeft){
+            $game->setPlayLeft($data['choice']);
+            $entityManager->flush();
 
-            if($userIsPlayerLeft){
-                $game->setPlayLeft($data['choice']);
+            if($game->getPlayRight() !== null){
+                    
+                switch($data['choice']){
+                    case 'rock':
+                        if($game->getPlayRight() === 'paper'){
+                            $game->setResult('winRight');
+                            break;
+                        }
+                        if($game->getPlayRight() === 'scissors'){
+                            $game->setResult('winLeft');
+                            break;
+                        }
+                        $game->setResult('draw');
+                        break;
+                    case 'paper':
+                        if($game->getPlayRight() === 'scissors'){
+                            $game->setResult('winRight');
+                            break;
+                        }
+                        if($game->getPlayRight() === 'rock'){
+                            $game->setResult('winLeft');
+                            break;
+                        }
+                        $game->setResult('draw');
+                        break;
+                    case 'scissors':
+                        if($game->getPlayRight() === 'rock'){
+                            $game->setResult('winRight');
+                            break;
+                        }
+                        if($game->getPlayRight() === 'paper'){
+                            $game->setResult('winLeft');
+                            break;
+                        }
+                        $game->setResult('draw');
+                        break;
+                }
+
+                $game->setState('finished');
                 $entityManager->flush();
 
-                if($game->getPlayRight() !== null){
-                        
-                    switch($data['choice']){
-                        case 'rock':
-                            if($game->getPlayRight() === 'paper'){
-                                $game->setResult('winRight');
-                                break;
-                            }
-                            if($game->getPlayRight() === 'scissors'){
-                                $game->setResult('winLeft');
-                                break;
-                            }
-                            $game->setResult('draw');
-                            break;
-                        case 'paper':
-                            if($game->getPlayRight() === 'scissors'){
-                                $game->setResult('winRight');
-                            }elseif($game->getPlayRight() === 'rock'){
-                                $game->setResult('winLeft');
-                            }else{
-                                $game->setResult('draw');
-                            }
-                            break;
-                        case 'scissors':
-                            if($game->getPlayRight() === 'rock'){
-                                $game->setResult('winRight');
-                            }elseif($game->getPlayRight() === 'paper'){
-                                $game->setResult('winLeft');
-                            }else{
-                                $game->setResult('draw');
-                            }
-                            break;
-                    }
+                return $this->json(
+                    $game,
+                    headers: ['Content-Type' => 'application/json;charset=UTF-8']
+                );
+            }
 
-                    $game->setState('finished');
-                    $entityManager->flush();
+            return $this->json(
+                $game,
+                headers: ['Content-Type' => 'application/json;charset=UTF-8']
+            );
 
-                    return $this->json(
-                        $game,
-                        headers: ['Content-Type' => 'application/json;charset=UTF-8']
-                    );
+        }
+        if($userIsPlayerRight){            
+            $game->setPlayRight($data['choice']);
+
+            $entityManager->flush();
+
+
+
+
+
+
+
+
+
+
+
+
+
+            if($game->getPlayLeft() !== null){
+
+                switch($data['choice']){
+                    case 'rock':
+                        if($game->getPlayLeft() === 'paper'){
+                            $game->setResult('winLeft');
+                            break;
+                        }
+                        if($game->getPlayLeft() === 'scissors'){
+                            $game->setResult('winRight');
+                            break;
+                        }
+                        $game->setResult('draw');
+                        break;
+                    case 'paper':
+                        if($game->getPlayLeft() === 'scissors'){
+                            $game->setResult('winLeft');
+                            break;
+                        }if($game->getPlayLeft() === 'rock'){
+                            $game->setResult('winRight');
+                            break;
+                        }
+                        $game->setResult('draw');
+                        break;
+                    case 'scissors':
+                        if($game->getPlayLeft() === 'rock'){
+                            $game->setResult('winLeft');
+                            break;
+                        }
+                        if($game->getPlayLeft() === 'paper'){
+                            $game->setResult('winRight');
+                            break;
+                        }
+                        $game->setResult('draw');
+                        break;
                 }
+
+                $game->setState('finished');
+                $entityManager->flush();
 
                 return $this->json(
                     $game,
@@ -242,74 +306,12 @@ class GameController extends AbstractController
                 );
 
             }
-            if($userIsPlayerRight){            
-                $game->setPlayRight($data['choice']);
+            return $this->json(
+                $game,
+                headers: ['Content-Type' => 'application/json;charset=UTF-8']
+            );
 
-                $entityManager->flush();
-
-
-
-
-
-
-
-
-
-
-
-
-
-                if($game->getPlayLeft() !== null){
-
-                    switch($data['choice']){
-                        case 'rock':
-                            if($game->getPlayLeft() === 'paper'){
-                                $game->setResult('winLeft');
-                            }elseif($game->getPlayLeft() === 'scissors'){
-                                $game->setResult('winRight');
-                            }else{
-                                $game->setResult('draw');
-                            }
-                            break;
-                        case 'paper':
-                            if($game->getPlayLeft() === 'scissors'){
-                                $game->setResult('winLeft');
-                            }elseif($game->getPlayLeft() === 'rock'){
-                                $game->setResult('winRight');
-                            }else{
-                                $game->setResult('draw');
-                            }
-                            break;
-                        case 'scissors':
-                            if($game->getPlayLeft() === 'rock'){
-                                $game->setResult('winLeft');
-                            }elseif($game->getPlayLeft() === 'paper'){
-                                $game->setResult('winRight');
-                            }else{
-                                $game->setResult('draw');
-                            }
-                            break;
-                    }
-
-                    $game->setState('finished');
-                    $entityManager->flush();
-
-                    return $this->json(
-                        $game,
-                        headers: ['Content-Type' => 'application/json;charset=UTF-8']
-                    );
-    
-                }
-                return $this->json(
-                    $game,
-                    headers: ['Content-Type' => 'application/json;charset=UTF-8']
-                );
-
-            }
-
-        // }else{
-        //     return new JsonResponse('Invalid choice', 400);
-        // }
+        }
 
         return new JsonResponse('coucou');
     }
