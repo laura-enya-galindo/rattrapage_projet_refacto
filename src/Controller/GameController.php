@@ -23,7 +23,6 @@ class GameController extends AbstractController
             headers: ['Content-Type' => 'application/json;charset=UTF-8']
         );
     }
-
     #[Route('/games', name: 'create_game', methods:['POST'])]
     public function launchGame(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
