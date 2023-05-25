@@ -55,20 +55,25 @@ class GameController extends AbstractController
     #[Route('/game/{identifiant}', name: 'fetch_game', methods:['GET'])]
     public function getGameInfo(EntityManagerInterface $entityManager, $identifiant): JsonResponse
     {
-        if(ctype_digit($identifiant)){
-            $party = $entityManager->getRepository(Game::class)->findOneBy(['id' => $identifiant]);
-
-            if($party !== null){
-                return $this->json(
-                    $party,
-                    headers: ['Content-Type' => 'application/json;charset=UTF-8']
-                );
-            }else{
-                return new JsonResponse('Game not found', 404);
-            }
-        }else{
+        if(ctype_digit($identifiant) === false){
             return new JsonResponse('Game not found', 404);
         }
+        // if(ctype_digit($identifiant)){
+        $party = $entityManager->getRepository(Game::class)->findOneBy(['id' => $identifiant]);
+        if($party === null){
+            return new JsonResponse('Game not found', 404);
+        }
+            // if($party !== null){
+        return $this->json(
+            $party,
+            headers: ['Content-Type' => 'application/json;charset=UTF-8']
+        );
+            // }else{
+            //     return new JsonResponse('Game not found', 404);
+            // }
+        // }else{
+        //     return new JsonResponse('Game not found', 404);
+        // }
     }
 
     #[Route('/game/{id}/add/{playerRightId}', name: 'add_user_right', methods:['PATCH'])]
