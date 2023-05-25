@@ -84,7 +84,6 @@ class GameController extends AbstractController
         if ((ctype_digit($id) === false) && (ctype_digit($playerRightId) === false)) {
             return new JsonResponse('Game not found', 404);
         }
-        // if(ctype_digit($id) && ctype_digit($playerRightId) && ctype_digit($currentUserId)){
    
         $playerLeft = $entityManager->getRepository(User::class)->find($currentUserId);
 
@@ -107,7 +106,6 @@ class GameController extends AbstractController
         if ($playerRight === null) {
             return new JsonResponse('User not found', 404);
         }
-        // if($playerRight !== null){
 
         if($playerLeft->getId() === $playerRight->getId()){
             return new JsonResponse('You can\'t play against yourself', 409);
@@ -122,16 +120,6 @@ class GameController extends AbstractController
             $game,
             headers: ['Content-Type' => 'application/json;charset=UTF-8']
         );
-        // }else{
-        //     return new JsonResponse('User not found', 404);
-        // }
-        // }else{
-        //     if(ctype_digit($currentUserId) === false){
-        //         return new JsonResponse('User not found', 401);
-        //     }
-    
-        //     return new JsonResponse('Game not found', 404);
-        // }
     }
 
     #[Route('/game/{identifiant}', name: 'send_choice', methods:['PATCH'])]
