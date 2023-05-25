@@ -28,36 +28,28 @@ class GameController extends AbstractController
     public function launchGame(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $currentUserId = $request->headers->get('X-User-Id');
-
-        if($currentUserId !== null){
-
-            if(ctype_digit($currentUserId) === false){
-                return new JsonResponse('User not found', 401);
-            }
-
-            $currentUser = $entityManager->getRepository(User::class)->find($currentUserId);
-
-            // Si l'utilisateur n'existe pas -> stop creation de partie
-            if($currentUser === null){
-                return new JsonResponse('User not found', 401);
-            }
-
-            $nouvelle_partie = new Game();
-            $nouvelle_partie->setState('pending');
-            $nouvelle_partie->setPlayerLeft($currentUser);
-
-            $entityManager->persist($nouvelle_partie);
-
-            $entityManager->flush();
-
-            return $this->json(
-                $nouvelle_partie,
-                201,
-                headers: ['Content-Type' => 'application/json;charset=UTF-8']
-            );
-        }else{
+        if (!isset($currentUserId) || ctype_digit($currentUserId) === false) {
             return new JsonResponse('User not found', 401);
         }
+        $currentUser = $entityManager->getRepository(User::class)->find($currentUserId);
+        if(!isset($currentUser)){
+            return new JsonResponse('User not found', 401);
+        }
+
+        $nouvelle_partie = new Game();
+        $nouvelle_partie->setState('pending');
+        $nouvelle_partie->setPlayerLeft($currentUser);
+
+        $entityManager->persist($nouvelle_partie);
+
+        $entityManager->flush();
+
+        return $this->json(
+            $nouvelle_partie,
+            201,
+            headers: ['Content-Type' => 'application/json;charset=UTF-8']
+        );
+        
     }
 
     #[Route('/game/{identifiant}', name: 'fetch_game', methods:['GET'])]
