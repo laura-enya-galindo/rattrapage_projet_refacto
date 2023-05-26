@@ -10,15 +10,15 @@ class GameControllerTest extends WebTestCase
     use RecreateDatabaseTrait;
 
     /**
-     * @dataProvider dataprovider_getGameList_checkAuthorizedMethods
+     * @dataProvider dataprovider_getPartieList_checkAuthorizedMethods
      */
-    public function test_getGameList_checkAuthorizedMethods($method){
+    public function test_getPartieList_checkAuthorizedMethods($method){
         $client = static::createClient();
         $client->request($method, '/games');
         $this->assertEquals(405, $client->getResponse()->getStatusCode());
     }
 
-    private static function dataprovider_getGameList_checkAuthorizedMethods(): array
+    private static function dataprovider_getPartieList_checkAuthorizedMethods(): array
     {
         return [
             ['PUT'],
@@ -27,19 +27,19 @@ class GameControllerTest extends WebTestCase
         ];
     }
 
-     public function test_getGameList_checkReturnStatus(){
+     public function test_getPartieList_checkReturnStatus(){
         $client = static::createClient();
         $client->request('GET', '/games');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
 
-    public function test_getGameList_checkValues(){
+    public function test_getPartieList_checkValues(){
         $client = static::createClient();
         $client->request('GET', '/games');
 
         $content = json_decode($client->getResponse()->getContent());
 
-        $expectedResult = json_decode(file_get_contents(__DIR__.'/expect/test_getGameList_checkValues.json'));
+        $expectedResult = json_decode(file_get_contents(__DIR__.'/expect/test_getPartieList_checkValues.json'));
         $this->assertEquals($expectedResult, $content);
     }
 
