@@ -27,7 +27,7 @@ cd refactorisation_projet
 
 docker-compose up -d --build
 
-docker-compose exec -u 1000 refactorisation-projet-php bash
+docker-compose exec -u 1000 refacto-projet-php bash
 
 composer install
 
@@ -56,5 +56,5 @@ Des tests fonctionnels ont été écrits pour garantir la non régression de l'a
 composer reset-db
 
 # Lance tous les tests disponibles. Le script s'arrête lorsqu'une erreur est rencontrée. Ne pas prendre en compte les warnings
-bin/phpunit
+php bin/phpunit
 ```
