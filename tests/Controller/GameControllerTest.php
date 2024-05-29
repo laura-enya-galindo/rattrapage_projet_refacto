@@ -27,7 +27,7 @@ class GameControllerTest extends WebTestCase
         ];
     }
 
-     public function test_getPartieList_checkReturnStatus(){
+     public function test_getGameList_checkReturnStatus(){
         $client = static::createClient();
         $client->request('GET', '/games');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
