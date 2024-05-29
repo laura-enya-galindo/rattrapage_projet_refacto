@@ -1,5 +1,7 @@
 # Projet de refactorisation - Symfony 6
 
+Equipe : Laura GALINDO (cheffe de projet), Jonathan BIKANBIDI, Beviryon ISSANGA NGOULOU, Hermelinda Maud NZOUMBA NGONDZI, Hirche BALSS, Olive ADE
+
 ## Sommaire
 
  * [A propos](#a-propos)
@@ -11,7 +13,7 @@
 
 Ceci est un repository pour s'exercer à la refactorisation d'une API simple, écrite en Symfony 6 et php 8. Il permettra de mettre à l'épreuve vos connaissances des bonnes pratiques générales de développement, votre soucis du design pattern, vos connaissances du langage PHP ainsi que des subtilités et fonctionnalités du framework Symfony 6.
 
-Notre tâche consiste en corriger la refactorisation réalisée par un autre élève.
+La tâche de mon équipe consiste en corriger la refactorisation réalisée par un autre élève.
 
 ## Installation
 
