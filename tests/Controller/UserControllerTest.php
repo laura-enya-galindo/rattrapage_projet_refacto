@@ -95,7 +95,7 @@ class UserControllerTest extends WebTestCase
      */
     public function test_getUserWithIdentifiant_checkWithInvalidId($id){
         $client = static::createClient();
-        $client->request('GET', '/user/'.$id);
+        $client->request('GET', '/player/'.$id);
         $this->assertEquals(404, $client->getResponse()->getStatusCode());
     }
 
@@ -111,13 +111,13 @@ class UserControllerTest extends WebTestCase
 
     public function test_getUserWithIdentifiant_checkStatusWithValidId(){
         $client = static::createClient();
-        $client->request('GET', '/user/1');
+        $client->request('GET', '/player/1');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
 
     public function test_getUserWithIdentifiant_checkValuesWithValidId(){
         $client = static::createClient();
-        $client->request('GET', '/user/1');
+        $client->request('GET', '/player/1');
 
         $content = $client->getResponse()->getContent();
         $this->assertJsonStringEqualsJsonString('{"id":1,"name":"John","age":25}', $content);

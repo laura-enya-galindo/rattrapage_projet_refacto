@@ -75,7 +75,7 @@ class UserController extends AbstractController
         }
     }
 
-    #[Route('/user/{identifiant}', name: 'get_user_by_id', methods:['GET'])]
+    #[Route('/user/{id}', name: 'get_user_by_id', methods:['GET'])]
     public function getUserWithIdentifiant($identifiant, EntityManagerInterface $entityManager): JsonResponse
     {
         if(ctype_digit(!$identifiant))
@@ -91,7 +91,7 @@ class UserController extends AbstractController
        
     }
 
-    #[Route('/user/{identifiant}', name: 'udpate_user', methods:['PATCH'])]
+    #[Route('/user/{id}', name: 'udpate_user', methods:['PATCH'])]
     public function updateUser(EntityManagerInterface $entityManager, $identifiant, Request $request): JsonResponse
     {
         $player = $entityManager->getRepository(User::class)->findBy(['id'=>$identifiant]);
