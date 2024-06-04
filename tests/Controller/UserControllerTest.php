@@ -50,7 +50,7 @@ class UserControllerTest extends WebTestCase
         $client->request('POST', '/users');
         $this->assertEquals(400, $client->getResponse()->getStatusCode());
     }
-
+    
     private static function dataprovider_createUser_checkWhenMissingData(): array
     {
         return [
